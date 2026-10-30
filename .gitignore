@@ -21,8 +21,9 @@ frontend/.vite/
 # Data / artifacts
 uploads/
 *.log
-benchmark.json
+benchmark_100k.json
 pr_curve.json
+# benchmark.json is committed so the Proof page works without a rebuild
 
 # Extracted doc artifacts
 extracted_*/
