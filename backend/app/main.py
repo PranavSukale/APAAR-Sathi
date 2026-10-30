@@ -8,6 +8,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .api import audit as audit_api
 from .api import auth as auth_api
+from .api import privacy as privacy_api
+from .api import reveals as reveals_api
 from .core.logging_filter import install_redaction
 
 install_redaction()
@@ -49,3 +51,5 @@ def health():
 
 app.include_router(auth_api.router)
 app.include_router(audit_api.router)
+app.include_router(reveals_api.router)
+app.include_router(privacy_api.router)
