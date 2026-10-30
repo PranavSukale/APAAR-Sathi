@@ -1,11 +1,34 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { getToken } from "./api/client";
+import { Layout } from "./components/Layout";
+import { Intake } from "./pages/Intake";
+import { Linkage } from "./pages/Linkage";
+import { Login } from "./pages/Login";
+import { Proof } from "./pages/Proof";
+import { Reveal } from "./pages/Reveal";
+import { Timeline } from "./pages/Timeline";
+
+const qc = new QueryClient({ defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } } });
+
+function Protected({ children }: { children: JSX.Element }) {
+  return getToken() ? <Layout>{children}</Layout> : <Navigate to="/login" replace />;
+}
+
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center text-gray-700">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold">APAAR Sathi</h1>
-        <p className="mt-1 text-sm text-gray-500">verify without exposing</p>
-        <p className="mt-2 text-sm text-amber-700 font-medium">SYNTHETIC DATA ONLY</p>
-      </div>
-    </div>
+    <QueryClientProvider client={qc}>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/linkage" element={<Protected><Linkage /></Protected>} />
+          <Route path="/timeline" element={<Protected><Timeline /></Protected>} />
+          <Route path="/intake" element={<Protected><Intake /></Protected>} />
+          <Route path="/reveal" element={<Protected><Reveal /></Protected>} />
+          <Route path="/proof" element={<Protected><Proof /></Protected>} />
+          <Route path="*" element={<Navigate to="/linkage" replace />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
 }
