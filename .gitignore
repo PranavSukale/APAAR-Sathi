@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets / keys (dev key files are generated locally)
+*.key
+keys/
+.env
+backend/.env
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Data / artifacts
+uploads/
+*.log
+benchmark.json
+pr_curve.json
+
+# Extracted doc artifacts
+extracted_*/
+PRD.txt
+TRD.txt
+
+# OS
+.DS_Store
+Thumbs.db
