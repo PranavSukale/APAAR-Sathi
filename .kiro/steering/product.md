@@ -1,4 +1,5 @@
-# APAAR Verify (SIH26263), privacy-first student data verification for AICTE institutions
+# APAAR Sathi (SIH26263), privacy-first student data verification for AICTE institutions
+Product name: "APAAR Sathi" (साथी = companion/ally). Tagline: "verify without exposing". A Sathi assists reviewers; it never polices or accuses.
 Thesis: "verify without exposing". Find duplicates/concurrent enrolment/intake overflow WITHOUT becoming a surveillance DB.
 All data synthetic. Every flag is a review signal; NEVER auto-merge/reject/label fraud.
 APAAR format is an UNVERIFIED configurable pattern (default 12 digits, no checksum). FORMAT_VALID != verified.

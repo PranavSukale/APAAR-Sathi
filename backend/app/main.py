@@ -12,7 +12,7 @@ from .core.logging_filter import install_redaction
 
 install_redaction()
 
-app = FastAPI(title="APAAR Verify", version="2.0")
+app = FastAPI(title="APAAR Sathi", version="2.0")
 
 app.add_middleware(
     CORSMiddleware,
