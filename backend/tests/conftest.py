@@ -47,13 +47,24 @@ def app_session(role: str, scope_ids: list[str]) -> Session:
     return s
 
 
+# FK-safe truncation order covering every table the DB-mutating fixtures touch, so each test
+# starts from the same clean state regardless of module execution order.
+_TRUNCATE_ORDER = [
+    "audit_events", "reveal_requests", "enrolment_episodes", "student_records",
+    "programs", "institutions", "users",
+]
+
+
+def truncate_all(session: Session) -> None:
+    for tbl in _TRUNCATE_ORDER:
+        session.execute(text(f"DELETE FROM {tbl}"))
+    session.commit()
+
+
 @pytest.fixture
 def two_institutions(owner_db: Session):
     """Create institution A and B with an operator each, and one student record in each."""
-    # Clean slate for scoped tables used by these tests. audit_events first (FK to users).
-    for tbl in ["audit_events", "enrolment_episodes", "student_records", "programs", "institutions", "users"]:
-        owner_db.execute(text(f"DELETE FROM {tbl}"))
-    owner_db.commit()
+    truncate_all(owner_db)
 
     a = Institution(official_institution_code="INST-A", name="Inst A", normalized_name="inst a")
     b = Institution(official_institution_code="INST-B", name="Inst B", normalized_name="inst b")

@@ -18,9 +18,17 @@ install_redaction()
 
 app = FastAPI(title="APAAR Sathi", version="2.0")
 
+# CORS: localhost for dev + any origins from CORS_ORIGINS (comma-separated) for the deployed frontend.
+import os
+
+_origins = ["http://localhost:5173", "http://localhost:4173"]
+_origins += [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
+_origin_regex = os.environ.get("CORS_ORIGIN_REGEX") or None
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:4173"],
+    allow_origins=_origins,
+    allow_origin_regex=_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -15,9 +15,9 @@ from backend.tests.conftest import _make_record, app_session
 
 @pytest.fixture
 def reveal_setup(owner_db):
-    for tbl in ["audit_events", "reveal_requests", "student_records", "users", "institutions"]:
-        owner_db.execute(text(f"DELETE FROM {tbl}"))
-    owner_db.commit()
+    from backend.tests.conftest import truncate_all
+
+    truncate_all(owner_db)
     from backend.app.models.models import Institution
 
     inst = Institution(official_institution_code="INST-R", name="R", normalized_name="r")

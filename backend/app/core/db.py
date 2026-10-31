@@ -12,17 +12,28 @@ _owner_engine: Engine | None = None
 _app_engine: Engine | None = None
 
 
+def _engine_kwargs() -> dict:
+    import os
+
+    from sqlalchemy.pool import NullPool
+
+    # Serverless: no persistent pool; pre-ping to survive Neon idle drops.
+    if os.environ.get("VERCEL") or os.environ.get("SERVERLESS"):
+        return {"future": True, "poolclass": NullPool, "pool_pre_ping": True}
+    return {"future": True, "pool_pre_ping": True}
+
+
 def owner_engine() -> Engine:
     global _owner_engine
     if _owner_engine is None:
-        _owner_engine = create_engine(get_settings().database_owner_url, future=True)
+        _owner_engine = create_engine(get_settings().database_owner_url, **_engine_kwargs())
     return _owner_engine
 
 
 def app_engine() -> Engine:
     global _app_engine
     if _app_engine is None:
-        _app_engine = create_engine(get_settings().database_app_url, future=True)
+        _app_engine = create_engine(get_settings().database_app_url, **_engine_kwargs())
     return _app_engine
 
 

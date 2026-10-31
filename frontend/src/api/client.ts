@@ -1,4 +1,7 @@
-const BASE = "/api/v1";
+// Local dev uses the Vite proxy (relative "/api/v1"); production reads VITE_API_BASE
+// (e.g. https://apaar-sathi-api.vercel.app) and appends /api/v1.
+const API_ROOT = (import.meta.env.VITE_API_BASE ?? "").replace(/\/$/, "");
+const BASE = `${API_ROOT}/api/v1`;
 
 let token: string | null = localStorage.getItem("apaar_token");
 

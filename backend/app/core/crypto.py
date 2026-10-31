@@ -29,19 +29,26 @@ class KeyManager:
         self._load_or_create()
 
     def _load_or_create(self) -> None:
+        # Serverless (Vercel): key material comes from an env var; filesystem is read-only.
+        env_keys = os.environ.get("APAAR_KEYS_JSON")
+        if env_keys:
+            self._ingest(json.loads(env_keys))
+            return
         if self._path.exists():
-            raw = json.loads(self._path.read_text())
-            self._active_version = int(raw["active_version"])
-            for v, keys in raw["versions"].items():
-                self._keys[int(v)] = {
-                    "data": base64.b64decode(keys["data"]),
-                    "token": base64.b64decode(keys["token"]),
-                }
+            self._ingest(json.loads(self._path.read_text()))
             return
         # auto-generate version 1 in dev
         self._keys[1] = {"data": os.urandom(32), "token": os.urandom(32)}
         self._active_version = 1
         self._persist()
+
+    def _ingest(self, raw: dict) -> None:
+        self._active_version = int(raw["active_version"])
+        for v, keys in raw["versions"].items():
+            self._keys[int(v)] = {
+                "data": base64.b64decode(keys["data"]),
+                "token": base64.b64decode(keys["token"]),
+            }
 
     def _persist(self) -> None:
         payload = {
@@ -54,8 +61,10 @@ class KeyManager:
                 for v, k in self._keys.items()
             },
         }
-        self._path.write_text(json.dumps(payload))
+        if os.environ.get("APAAR_KEYS_JSON"):
+            return  # serverless: keys are env-provided, never written to disk
         try:
+            self._path.write_text(json.dumps(payload))
             os.chmod(self._path, 0o600)
         except OSError:
             pass
